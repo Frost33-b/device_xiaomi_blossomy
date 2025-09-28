@@ -8,7 +8,7 @@ ro.config.vc_call_vol_steps=9
 Build.BRAND=MTK
 
 # Los Maintainer
-ro.lineage.maintainer=diasthiago
+ro.lineage.maintainer=thiagochizz
 
 # Camera
 ro.camera.sound.forced=0

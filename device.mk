@@ -419,7 +419,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/public.libraries.vendor.txt:$(TARGET_COPY_OUT_VENDOR)/etc/public.libraries.txt
 
 # Android Go
-PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK := true 
 PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION := frameworks/base/config/boot-image-profile.txt
 PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE := true
 USE_DEX2OAT_DEBUG := false
@@ -427,21 +426,27 @@ WITH_DEXPREOPT_DEBUG_INFO := false
 
 # Do not generate libartd.
 PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
+PRODUCT_OTHER_JAVA_DEBUG_INFO := false
+PRODUCT_SYSTEM_SERVER_DEBUG_INFO := false
 
 # Strip the local variable table and the local variable type table to reduce
 # the size of the system image. This has no bearing on stack traces, but will
 # leave less information available via JDWP.
 PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := true
 
-# Reduce SystemServer Debug
-PRODUCT_SYSTEM_SERVER_DEBUG_INFO := false
+# Don't compile SystemUITests
+EXCLUDE_SYSTEMUI_TESTS := true
 
-# Scudo
+# VNDK
 PRODUCT_DISABLE_SCUDO := true
 TARGET_VNDK_USE_CORE_VARIANT := true
 
 # DebugFS
 PRODUCT_SET_DEBUGFS_RESTRICTIONS := true
+
+PRODUCT_SYSTEM_EXT_PROPERTIES += \
+    dalvik.vm.minidebuginfo=false \
+    dalvik.vm.dex2oat-minidebuginfo=false
 
 # Dexpreopt
 PRODUCT_DEXPREOPT_SPEED_APPS += \
@@ -461,9 +466,14 @@ endif
 PRODUCT_PACKAGES += \
     remove_packages
 
-# Disable async MTE on system_server
+# Disable MTE Async on some processes
 PRODUCT_SYSTEM_EXT_PROPERTIES += \
-    arm64.memtag.process.system_server=off
+    arm64.memtag.system_server?=off \
+    arm64.memtag.process.system_server?=off \
+    arm64.memtag.app.com.android.se?=off \
+    arm64.memtag.app.com.android.nfc?=off \
+    arm64.memtag.app.com.android.bluetooth?=off \
+    arm64.memtag.app.com.google.android.bluetooth?=off
 
 # Updater
 PRODUCT_PROPERTY_OVERRIDES += \
